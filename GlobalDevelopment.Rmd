@@ -1,0 +1,181 @@
+---
+title: "Make Countries Move"
+author: "Caroline-Marie Jacobsen"
+date: "14/3 2025"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#  Explore global development with R
+In this exercise, you will load a filtered `gapminder` dataset -  with a subset of data on global development from 1952 - 2007 in increments of 5 years - to capture the period between the Second World War and the Global Financial Crisis. 
+
+**Your task: Explore the data and visualise it in both static and animated ways, providing answers and solutions to 7 questions/tasks within this script.** 
+
+- **Submit to Github this script with solutions and its knitted version.**  
+- **Submit to Brightspace a document with the (1) URL of this script and its knitted version in Github (2) answer of 250 words and a (3) visualisation of the Final Question**
+
+## Get the necessary packages
+First, start with installing and activating the relevant packages `tidyverse`, `gganimate`, and `gapminder` if you do not have them already. 
+*Pay attention to what warning messages you get when installing `gganimate`, as your computer might need other packages than `gifski` and `av`*
+
+```{r libraries, echo = FALSE}
+# install.packages("gganimate")
+# install.packages("gifski")
+# install.packages("av")
+# install.packages("gapminder")
+library(tidyverse)
+library(gganimate)
+library(gifski)
+library(av)
+library(gapminder)
+```
+
+## Look at the data and tackle the tasks
+First, see which specific years are actually represented in the dataset and what variables are being recorded for each country. Note that when you run the cell below, Rmarkdown will give you two results - one for each line - that you can flip between.
+```{r}
+str(gapminder)
+unique(gapminder$year)
+head(gapminder)
+```
+
+The dataset contains information on each country in the sampled year, its continent, life expectancy, population, and GDP per capita.
+
+Let's plot all the countries in 1952.
+```{r 1957}
+theme_set(theme_bw())
+options(scipen = 999)
+ggplot(data = subset(gapminder, year == 1952), aes(gdpPercap, lifeExp, size = pop)) +
+  geom_point(aes(colour = continent)) +
+  scale_x_log10() +
+  ggtitle("1952")
+
+
+```
+*Question 1: why does it make sense to have a log10 scale (`scale_x_log10()`) on the x axis?* (hint: try to comment it out and observe the result)  
+-It spreads out the data, so it makes it easier to read.
+
+
+Next, you can generate a similar plot for 2007 and compare the differences
+```{r 2007}
+ggplot(data = subset(gapminder, year == 2007), aes(gdpPercap, lifeExp, size = pop)) +
+  geom_point(aes (colour = continent)) +
+  scale_x_log10() +
+  ggtitle("2007")
+```
+*Question 2: In Figure 1: Who is the outlier (the richest country in 1952) far right on the x axis?*  
+The richest country in 1952 is Kuwait. I used the code below to find it. 
+
+```{r}
+gapminder %>% 
+  filter(year == 1952) %>% 
+  slice_max(gdpPercap, n = 1)
+```
+*Question 3: Figures 1 and 2: Differentiate the **continents** by color, and fix the axis labels and units to be more legible (**Hint**: the 2.50e+08 is so called "scientific notation". You want to eliminate it.)*  
+- I changed it to colour in the code that was already written here above the the visualisation. I used the function options(scipen = 999) to change to numbers to natural numbers, which makes it easier to read. 
+
+*Question 4: What are the five richest countries in the world in 2007?*  
+Norway, Kuwait, Singapore, United States and Ireland 
+
+
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  slice_max(gdpPercap, n = 5)
+```
+##  Make it move!
+
+Also, there are *two* ways of animating the gapminder ggplot.
+
+### Option 1: Animate using transition_states() 
+
+The first step is to create the object-to-be-animated
+```{r anim1 start}
+
+anim <- ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop)) +
+  geom_point() +
+  scale_x_log10()  # convert x to log scale
+anim
+```
+
+**This plot collates all the points across time. The next step is to split it into years and animate it.
+
+```{r anim1}
+anim + transition_states(year, 
+                      transition_length = 1,
+                      state_length = 1)
+
+```
+### Option 2 Animate using transition_time()
+This option smooths the transition between different 'frames', because it interpolates and adds transitional years where there are gaps in the timeseries data.
+
+```{r anim2}
+anim2 <- ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop)) +
+  geom_point() +
+  scale_x_log10() + # convert x to log scale
+  transition_time(year)
+anim2
+```
+
+The much smoother movement in Option 2 will be much more noticeable if you add a title to the chart, that will page through the years corresponding to each frame.
+
+### Tasks for the animations:
+
+*Question 5: Can you add a title to one or both of the animations above that will change* 
+ *in sync with the animation?* *(**Hint**: search labeling for `transition_states()` and `transition_time()` functions respectively)*  
+```{r}
+
+anim2 <- ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop)) +
+  geom_point(alpha = 0.7) +
+  scale_x_log10() +
+  transition_time(year) +
+  labs(title = "Global Development from 1952 to 2007. Year:{frame_time}",
+       x = "GDP per capita in 2005 USD",
+       y = "Life Expectancy")
+ anim2   
+ 
+
+```
+
+6. *Can you made the axes' labels and units more readable? Consider expanding the abbreviated labels as well as the scientific notation in the legend and x axis to whole numbers. Also, differentiate the countries from different continents by color*  
+```{r}
+anim2 <- ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, colour = continent)) +
+  geom_point(alpha = 0.7) +
+  scale_x_log10() +
+  transition_time(year) +
+  labs(title = "Global Development from 1952 to 2007. Year:{frame_time}",
+       x = "GDP per capita in 2005 USD",
+       y = "Life Expectancy") +
+  theme(
+    plot.title = element_text(size=18, face="bold"),
+    axis.title.x = element_text(size=16, face="bold"),
+    axis.title.y = element_text(size=16, face="bold"),
+    axis.text.x = element_text(size=14),
+    axis.text.y = element_text(size=14))
+anim2
+
+#I used chatgpt to find the theme to make the texts larger and therefore more readable. 
+
+```
+
+### Final Question
+7. **Is the world a better place today than it was in the year you were born?** *Answer this question using the gapminder data.  Define better either as more prosperous, more free, more healthy, or suggest another measure that you can get from gapminder. Submit a 250 word answer with an illustration to Brightspace. Include a URL in your Brightspace submission that links to the coded solutions in Github. [Hint: if you wish to have more data than is in the filtered gapminder, you can load either the `gapminder_unfiltered` dataset or download more historical data at https://www.gapminder.org/data/ ]*
+```{r}
+birth_year <-  2002
+Difference <- gapminder %>%
+  select(lifeExp, year, continent) %>% 
+  filter(year == c(2002, 2007)) %>% 
+  ggplot(aes(x = continent, y = lifeExp, fill = continent )) +
+  geom_boxplot()+
+  facet_wrap(~year)+
+  labs(title = "Difference In Life Expectancy From 2002 To 2007",
+       y = "Life Expectancy")
+
+Difference
+```
+  
+  *Is the world a better place today than the year you were born?  
+- Using the data from gapminder on life expectancy in the year 2002 and 2007 there is a slight but significant increase in the overall life expectancy on all continents. Life expectancy has been chosen as the variable for answering the question; “is the world a better place today”. This choice was made due to the increase in life expectancy showing the result of an increase in better health, fewer child death, less war, and a better standard of living in average for all peoples. Since the boxplot shows an increase in this variable, then we can conclude that the world in fact is better place based on this one variable alone. However, the use of only one variable, to answer question as complex as this, should not be considered as a clear and defining answer. And should therefore be compared to other measurements to insure the data’s reliability and stable growth and increase in standard of living across the board. We could have chosen any other of the variables in the dataset and it would result in the same conclusion. However, the illustration shows a clear increase in life expectancy over a period of just five years, especially in Africa and Asia, the countries with the lowest values, where we see a larger increase. This is a sign that the world is developing into a better place for all. 
+
