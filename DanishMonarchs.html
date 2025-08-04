@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Caroline-Marie Jacobsen" />
+<meta name="author" content="Caroline Marie Jacobsen" />
 
 
 <title>Danish Kings, W.10</title>
@@ -350,40 +350,28 @@ display: none;
 
 
 <h1 class="title toc-ignore">Danish Kings, W.10</h1>
-<h4 class="author">Caroline-Marie Jacobsen</h4>
+<h4 class="author">Caroline Marie Jacobsen</h4>
 <h4 class="date">07-03-2025</h4>
 
 </div>
 
 
-<p>The task here is to load your Danish Monarchs csv into R using the
-<code>tidyverse</code> toolkit, calculate and explore the kings’
-duration of reign with pipes <code>%&gt;%</code> in <code>dplyr</code>
-and plot it over time.</p>
-<div id="load-the-kings" class="section level2">
-<h2>Load the kings</h2>
-<p>Make sure to first create an <code>.Rproj</code> workspace with a
-<code>data/</code> folder where you place either your own dataset or the
-provided <code>kings.csv</code> dataset.</p>
-<ol style="list-style-type: decimal">
-<li>Look at the dataset that are you loading and check what its columns
-are separated by? (hint: open it in plain text editor to see)</li>
-</ol>
-<p>List what is the</p>
-<p>separator: “,”</p>
-<ol start="2" style="list-style-type: decimal">
-<li>Create a <code>kings</code> object in R with the different functions
-below and inspect the different outputs.</li>
-</ol>
+<p>To solve the task I will start by loading my Danish Monarchs csv file
+into R and using the tidyverse package to extract the data. Then I will
+calculate and illustrate the kings duration of reign using pipes.</p>
+<div id="loading-the-kings" class="section level2">
+<h2>Loading the kings</h2>
+<p>I will start by setting up a dataframe by loading the Danish Monarchs
+csv file into R. The separator for my csv file is “,”. To figure out how
+to create the Danish Monarchs objects I will test the different
+functions below.</p>
 <ul>
 <li><code>read.csv()</code></li>
 <li><code>read_csv()</code></li>
 <li><code>read.csv2()</code></li>
 <li><code>read_csv2()</code></li>
 </ul>
-<pre class="r"><code># FILL IN THE CODE BELOW and review the outputs
-
-library(tidyverse)</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
@@ -414,7 +402,9 @@ kings4 &lt;- read_csv2(&quot;data/Kongerækken.csv&quot;)</code></pre>
 ## chr (1): Navn,Fødselsår,Dødsår,Regering_Start,Regering_Slut,Usikkere_Årstal,...
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<p>Answer:</p>
+</div>
+<div id="answering-questions" class="section level2">
+<h2>Answering questions</h2>
 <ol style="list-style-type: decimal">
 <li>Which of these functions is a <code>tidyverse</code> function? Read
 data with it below into a <code>kings</code> object<br />
@@ -451,9 +441,7 @@ column<br />
 <li>To show the dataset I type glimpse(kings). It will show me how R
 interprects each column. The results can be seen below.</li>
 </ul>
-<pre class="r"><code># COMPLETE THE BLANKS BELOW WITH YOUR CODE, then turn the &#39;eval&#39; flag in this chunk to TRUE.
-
-kings &lt;- read_csv(&quot;data/Kongerækken.csv&quot;)</code></pre>
+<pre class="r"><code>kings &lt;- read_csv(&quot;data/Kongerækken.csv&quot;)</code></pre>
 <pre><code>## Rows: 56 Columns: 8
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -478,47 +466,20 @@ kings &lt;- read_csv(&quot;data/Kongerækken.csv&quot;)</code></pre>
 ## $ Antal_regeringsår &lt;dbl&gt; 22, 37, 27, 4, 17, 7, 5, 7, 6, 6, 9, 8, 30, 3, 9, 11…
 ## $ Slægt             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
 </div>
-<div id="calculate-the-duration-of-reign-for-all-the-kings-in-your-table" class="section level2">
-<h2>Calculate the duration of reign for all the kings in your table</h2>
-<p>You can calculate the duration of reign in years with
-<code>mutate</code> function by subtracting the equivalents of your
-<code>startReign</code> from <code>endReign</code> columns and writing
-the result to a new column called <code>duration</code>. But first you
-need to check a few things:</p>
-<ul>
-<li>Is your data messy? Fix it before re-importing to R</li>
-<li>Do your start and end of reign columns contain NAs? Choose the right
-strategy to deal with them: <code>na.omit()</code>,
-<code>na.rm=TRUE</code>, <code>!is.na()</code></li>
-</ul>
-<p>Create a new column called <code>duration</code> in the kings
-dataset, utilizing the <code>mutate()</code> function from tidyverse.
-Check with your group to brainstorm the options.</p>
+<div id="calculating-the-duration-of-reign-for-all-the-kings" class="section level2">
+<h2>Calculating the duration of reign for all the kings</h2>
+<p>I will calculate the duration of reign in years using the mutate
+function. I will subtract start reign (“regering_Start”) from end reign
+(“Regering_Slut”) and create a new column called duration.
+(Antal_regeringsår)</p>
 <pre class="r"><code>#The column &quot;Antal_regeringsår&quot; did already exist in my dataset. Here I am just showing how I would create the column and then just overriding the already existing column named &quot;Antal_regeringsår&quot;. 
 
 kings &lt;- kings %&gt;%
   mutate(Antal_regeringsår = Regering_Slut - Regering_Start)</code></pre>
 </div>
-<div id="calculate-the-average-duration-of-reign-for-all-rulers" class="section level2">
-<h2>Calculate the average duration of reign for all rulers</h2>
-<p>Do you remember how to calculate an average on a vector object? If
-not, review the last two lessons and remember that a column is basically
-a vector. So you need to subset your <code>kings</code> dataset to the
-<code>duration</code> column. If you subset it as a vector you can
-calculate average on it with <code>mean()</code> base-R function. If you
-subset it as a tibble, you can calculate average on it with
-<code>summarize()</code> tidyverse function. Try both ways!</p>
-<ul>
-<li>You first need to know how to select the relevant
-<code>duration</code> column. What are your options?</li>
-<li>Is your selected <code>duration</code> column a tibble or a vector?
-The <code>mean()</code> function can only be run on a vector. The
-<code>summarize()</code> function works on a tibble.</li>
-<li>Are you getting an error that there are characters in your column?
-Coerce your data to numbers with <code>as.numeric()</code>.</li>
-<li>Remember to handle NAs: <code>mean(X, na.rm=TRUE)</code></li>
-</ul>
-<pre class="r"><code>#I am finding the mean() by using base R function. By writing &quot;kings$Antal_regeringsår&quot;, I choose only to find the average in this specific column. 
+<div id="calculating-the-average-duration-of-reign-for-all-rulers" class="section level2">
+<h2>Calculating the average duration of reign for all rulers</h2>
+<pre class="r"><code>#I am finding the mean() by using base R function. By writing &quot;kings$Antal_regeringsår&quot;, I choose only to find the average in this specific column. I am also writing na.rm = TRUE to handle any NAs. 
 
 mean(kings$Antal_regeringsår, na.rm = TRUE)</code></pre>
 <pre><code>## [1] 19.92727</code></pre>
@@ -535,11 +496,7 @@ summarise(mean(Antal_regeringsår, na.rm = TRUE))</code></pre>
 <div id="how-many-and-which-kings-enjoyed-a-longer-than-average-duration-of-reign" class="section level2">
 <h2>How many and which kings enjoyed a longer-than-average duration of
 reign?</h2>
-<p>You have calculated the average duration above. Use it now to
-<code>filter()</code> the <code>duration</code> column in
-<code>kings</code> dataset. Display the result and also count the
-resulting rows with <code>count()</code></p>
-<pre class="r"><code>#I am finding the kings who had a longer than average duration of reign. 
+<pre class="r"><code>#I am finding the kings who had a longer than average duration of reign using the filter function
 
 kings_longer_than_average &lt;- kings %&gt;%
   filter(Antal_regeringsår &gt; mean(Antal_regeringsår, na.rm =TRUE))
@@ -555,7 +512,7 @@ glimpse(kings_longer_than_average)</code></pre>
 ## $ Usikkere_Årstal   &lt;chr&gt; &quot;Ja&quot;, &quot;Ja&quot;, &quot;Ja&quot;, &quot;Nej&quot;, &quot;Nej&quot;, &quot;Nej&quot;, &quot;Nej&quot;, &quot;Nej&quot;,…
 ## $ Antal_regeringsår &lt;dbl&gt; 22, 37, 27, 27, 30, 25, 20, 39, 27, 33, 35, 43, 33, …
 ## $ Slægt             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;Old…</code></pre>
-<pre class="r"><code>#and count 
+<pre class="r"><code>#and using count() to count how many kings it applies to. 
 
 count(kings_longer_than_average)</code></pre>
 <pre><code>## # A tibble: 1 × 1
@@ -565,15 +522,6 @@ count(kings_longer_than_average)</code></pre>
 </div>
 <div id="how-many-days-did-the-three-longest-ruling-monarchs-rule" class="section level2">
 <h2>How many days did the three longest-ruling monarchs rule?</h2>
-<ul>
-<li>Sort kings by reign <code>duration</code> in the descending order.
-Select the three longest-ruling monarchs with the <code>slice()</code>
-function</li>
-<li>Use <code>mutate()</code> to create <code>Days</code> column where
-you calculate the total number of days they ruled</li>
-<li>BONUS: consider the transition year (with 366 days) in your
-calculation!</li>
-</ul>
 <pre class="r"><code>#I will use the slice_max function to find the 3 longest-ruling monarchs. Setting the number = 3 will give me the result. 
 
 kings %&gt;% 
@@ -586,7 +534,7 @@ kings %&gt;%
 ## 3 Erik_7_af_Pomme…      1382   1459           1396          1439 Ja             
 ## 4 Christian_9           1818   1906           1863          1906 Nej            
 ## # ℹ 2 more variables: Antal_regeringsår &lt;dbl&gt;, Slægt &lt;chr&gt;</code></pre>
-<pre class="r"><code>#I am creating the new column &quot;Antal_dage&quot;
+<pre class="r"><code>#I am creating the new column &quot;Antal_dage&quot;, using the mutate function.
 
 kings &lt;- kings %&gt;%
   mutate(Antal_dage = Antal_regeringsår * 365)
@@ -603,29 +551,52 @@ kings %&gt;%
 ## 3 Erik_7_af_Pomme…      1382   1459           1396          1439 Ja             
 ## 4 Christian_9           1818   1906           1863          1906 Nej            
 ## # ℹ 3 more variables: Antal_regeringsår &lt;dbl&gt;, Slægt &lt;chr&gt;, Antal_dage &lt;dbl&gt;</code></pre>
+<p>The result shows 4 instead of 3 because there is a shared first place
+with Christian_4 and Margrethe_2 with 52 years (18980 days) each and a
+shared second place with Erik_7_af_Pommern and Christian_9 with 43 years
+(15695 days) each.</p>
 </div>
-<div id="challenge-plot-the-kings-duration-of-reign-through-time" class="section level2">
-<h2>Challenge: Plot the kings’ duration of reign through time</h2>
-<p>What is the long-term trend in the duration of reign among Danish
-monarchs? How does it relate to the historical violence trends ?</p>
-<ul>
-<li>Try to plot the duration of reign column in <code>ggplot</code> with
-<code>geom_point()</code> and <code>geom_smooth()</code></li>
-<li>In order to peg the duration (which is between 1-99) somewhere to
-the x axis with individual centuries, I recommend creating a new column
-<code>midyear</code> by adding to <code>startYear</code> the product of
-<code>endYear</code> minus the <code>startYear</code> divided by two
-(<code>startYear + (endYear-startYear)/2</code>).</li>
-<li>Now you can plot the kings dataset, plotting <code>midyear</code>
-along the x axis and <code>duration</code> along y axis</li>
-<li>BONUS: add a title, nice axis labels to the plot and make the theme
-B&amp;W and font bigger to make it nice and legible!</li>
-</ul>
-<pre class="r"><code># YOUR CODE</code></pre>
-<p>And to submit this rmarkdown, knit it into html. But first, clean up
-the code chunks, adjust the date, rename the author and change the
-<code>eval=FALSE</code> flag to <code>eval=TRUE</code> so your script
-actually generates an output. Well done!</p>
+<div id="challenge-plotting-the-kings-duration-of-reign-through-time" class="section level2">
+<h2>Challenge: Plotting the kings’ duration of reign through time</h2>
+<p>I will try to illustrate the long term trend in the duration of reign
+among Danish monarchs and give an explanation as to why the trend has
+occurred below.</p>
+<p>I will start by plotting the duration of reign, using ggplot with
+geom_point() and geom_smooth. First I select the columns I will need and
+use the mutate function to calculate the new column midyear (Midt_år). I
+am creating the new column by the following calculation: (Regering_Start
++ (Regering_Slut - Regering_Start) / 2 ) and adding na.rm = TRUE to
+remove any NAs.</p>
+<p>Then I will create my plot with midt_år on the x axis and
+Antal_regingsår on the y axis and adding geom_point and geom_smooth to
+create the markings and line trend on my visual.</p>
+<pre class="r"><code># YOUR CODE
+kings_column &lt;- kings %&gt;% 
+  select(Regering_Slut, Regering_Start, Antal_regeringsår) %&gt;%
+  mutate(Midt_år = (Regering_Start + (Regering_Slut - Regering_Start) / 2 ), na.rm = TRUE) %&gt;%
+  ggplot(aes(x = Midt_år, y = Antal_regeringsår)) +
+  geom_point() +
+  geom_smooth()
+
+
+print(kings_column)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula = &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 1 row containing non-finite outside the scale range
+## (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 1 row containing missing values or values outside the scale range
+## (`geom_point()`).</code></pre>
+<p><img role="img" src="data:image/png;base64,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" width="672" />
+The illustration shows a decline in the duration of reign from the
+periods start in 936 to around 1100 and an increase from 1100 to the end
+of period in 2024. There is not one explanation as to why but several
+factors can be taking into consideration. The last assassination of a
+king in Denmark happened in 1286 and in 1660 Denmark become hereditary
+monarchy, which meant the possible successors was not fighting over the
+throne anymore. The Danish society did however not get any less violent
+the middle ages. One should also the consider the possibly of
+miscellaneous illnesses resulting in the kings death as suppose to old
+age, which is more likely to happen in for example 1050 than in
+1900.</p>
 </div>
 
 
