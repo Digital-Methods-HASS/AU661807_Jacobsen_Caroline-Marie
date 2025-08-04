@@ -1,11 +1,14 @@
 ---
-title: "Assignment w.12"
-author: "Caroline-Marie Jacobsen"
+title: "Assignment w.12, Sentiment Analysis"
+author: "Caroline Marie Jacobsen"
 date: "2025-03-21"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+## Sentiment Analysis with Game of Thrones 
+
+I will start by loading my libraries below
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE,
                       message = FALSE)
@@ -20,7 +23,7 @@ library(ggwordcloud)
 ```
 
 
-### Get the IPCC report:
+### Getting the IPCC report: the got pdf from github 
 ```{r get-document, results="hide"}
 got_path <- here("data","got.pdf")
 got_path
@@ -45,16 +48,16 @@ got_df <- data.frame(got_text) %>%
 got_df
 
 ```
-#Here we are using:  
+Here I am are using:  
 `stringr::str_split() to split up pages into separate line (separated by `\n`)  
 `tidyr::unnest()`to unnest into regular columns  
 white space with `stringr::str_trim()`to remove leading/trailing  
 
 Now each line, on each page, is its own row, with extra starting & trailing spaces removed. 
 
-### Get the tokens (individual words) in tidy format
+## Getting the tokens (individual words) in tidy format
 
-Use `tidytext::unnest_tokens()` (which pulls from the `tokenizer`) package, to split columns into tokens. We are interested in *words*, so that's the token we'll use:
+Using `tidytext::unnest_tokens()` (which pulls from the `tokenizer`) package, to split columns into tokens. I am interested in *words*, so that's the token we'll use:
 
 ```{r tokenize}
 got_tokens <- got_df %>% 
@@ -63,7 +66,7 @@ got_tokens
 ```
 Now each word has its own row
 
-Then we are counting the words 
+Then I am are counting the words, using the count() function 
 ```{r count-words}
 got_wc <- got_tokens %>% 
   count(word) %>% 
@@ -71,9 +74,9 @@ got_wc <- got_tokens %>%
 got_wc
 ```
 
-### Remove stop words:
+### Removing stop words:
 
-We will remove stop words using `tidyr::anti_join()`:
+I will remove stop words using `tidyr::anti_join()`:
 ```{r stopwords}
 View(stop_words)
 
@@ -82,7 +85,7 @@ got_stop <- got_tokens %>%
   select(-got_text)
 ```
 
-Now check the counts again: 
+Then I am checking the counts again: 
 ```{r count-words2}
 got_swc <- got_stop %>% 
   count(word) %>% 
@@ -90,7 +93,7 @@ got_swc <- got_stop %>%
 got_swc
 ```
 
-Get rid of all the numbers (non-text) in `got_stop`
+Getting rid of all the numbers (non-text) in `got_stop`
 ```{r skip-numbers}
 got_no_numeric <- got_stop %>% 
   filter(is.na(as.numeric(word)))
@@ -101,13 +104,14 @@ got_no_numeric <- got_stop %>%
 ```{r wordcloud-prep}
 length(unique(got_no_numeric$word))
 
-#The top 100 most frequent
+#The top 100 most frequent words
 got_top100 <- got_no_numeric %>% 
   count(word) %>% 
   arrange(-n) %>% 
   head(100)
 got_top100
 ```
+Making the words into a word cloud
 
 ```{r wordcloud}
 got_cloud <- ggplot(data = got_top100, aes(label = word)) +
@@ -117,7 +121,7 @@ got_cloud <- ggplot(data = got_top100, aes(label = word)) +
 got_cloud
 ```
 
-Customising
+Customising the word cloud with colours and changing the shape into a star
 ```{r wordcloud-pro}
 ggplot(data = got_top100, aes(label = word, size = n)) +
   geom_text_wordcloud_area(aes(color = n), shape = "star") +
@@ -127,7 +131,7 @@ ggplot(data = got_top100, aes(label = word, size = n)) +
 ```
 
 ### Sentiment analysis  
-"afinn" shows the words ranked from -5 (very negative) to +5 (very positive)
+Using "afinn" to show the words ranked from -5 (very negative) to +5 (very positive)
 
 ```{r afinn}
 get_sentiments(lexicon = "afinn")
@@ -139,7 +143,8 @@ afinn_pos <- get_sentiments("afinn") %>%
 afinn_pos
 ```
 
-bing: binary, "positive" or "negative"
+Using bing to categorise words into binary categories: "positive" or "negative"
+
 ```{r bing}
 get_sentiments(lexicon = "bing")
 ```
@@ -152,18 +157,18 @@ Now nrc:
 get_sentiments(lexicon = "nrc")
 ```
 
-Let's do sentiment analysis on the GOT text data using afinn, and nrc. 
+Then I am doing sentiment analysis on the GOT text data using afinn, and nrc. 
 
 ### Sentiment analysis with afinn: 
 
-First, bind words in `got_stop` to `afinn` lexicon:
+First, binding words in `got_stop` to `afinn` lexicon:
 ```{r bind-afinn}
 got_afinn <- got_stop %>% 
   inner_join(get_sentiments("afinn"))
 got_afinn
 ```
 
-Let's find some counts (by sentiment ranking):
+Then finding some counts (by sentiment ranking):
 ```{r count-afinn}
 got_afinn_hist <- got_afinn %>% 
   count(value)
@@ -174,7 +179,7 @@ ggplot(data = got_afinn_hist, aes(x = value, y = n)) +
   theme_bw()
 ```
 
-Investigatig in more depth. Looking at what the words in -2 are. 
+Investigating in more depth. Looking at what the words in -2 are. 
 ```{r afinn-2}
 got_afinn2 <- got_afinn %>% 
   filter(value == 2)
@@ -209,7 +214,7 @@ The mean and median indicate negative overall sentiments based on the AFINN lexi
 
 ### NRC lexicon for sentiment analysis
 
-As above, we'll use inner_join() to combine the IPCC non-stopword text with the nrc lexicon: 
+As above, I will use inner_join() to combine the IPCC non-stopword text with the nrc lexicon: 
 
 ```{r bind-bing}
 got_nrc <- got_stop %>% 
@@ -270,11 +275,16 @@ bg = "white")
 
 ```
 
-Here we see that "lord" is under both trust and disgust. We will here check in which other sentiments it appears. 
+Here we see that "lord" is under both trust and disgust. I will here check in which other sentiments it appears. 
+
 ```{r nrc-lord}
 lord <- get_sentiments(lexicon = "nrc") %>% 
   filter(word == "lord")
 
 lord
 ```
-The word "lord" appears in more than one sentiment. Here in both "disgust", "negative", "positive" and "trust". It depends on how one looks at the word and what is represents for each person. In broader perspective, how one looks at the current institution of power, here represented by the lord. 
+## Explaing the visualisation 
+
+This visualisation shows the words from the Game of Thrones’ text grouped into 10 different sentiments. Overall, the words mostly appear in the negative words category, Ex. anger, sadness, fear. Having read the book I am not surprised by this result. The book contains many violent scenes, often resulting in death.  The visualisations shows the word “death” appearing numerous times and also in different sentiments. The sentiments also shows a difference in the meaning of certain words. An example here would be the word “Lord”.  Lord appears in more than one sentiment. Here in both "disgust", "negative", "positive" and "trust". It depends on how one looks at the word and what is represents for each person. In broader perspective, how one looks at the current institution of power, here represented by the lord. The same however does not apply to the word “king” which only appears in the sentiment “Positive” even though the same logic concerning the view of power could be applied here.  
+
+However, one surprise here is that “death” is not considered a negative word in this sentiment. This is a clear example of what the visualisation lacks. By grouping the words  in these sentiments, some elements gets lost in the process. This becomes important if one were to lead something out of only the two categories “Positive” and “Negative”, where the result will show next to no difference between the count of positive and negative words and thus making it hard to determine just be these categories if the text is mostly positive or negative.  
