@@ -1,0 +1,127 @@
+---
+title: "Final Project, Women in the workforce"
+author: "Caroline Marie Jacobsen Larsen"
+date: "2025-08-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+
+data_k <- read_csv2("data/dam_final_1.csv")
+data_mk <- read_csv2("data/dam_final_2.csv")
+samlet_data <- merge(data_k, data_mk)
+```
+
+Creating the visuals 
+
+```{r}
+
+# Chart 1: women in the workforce
+
+options(scipen = 999)
+
+kvinder_på_AM <- samlet_data %>%
+  select(Aarstal, AS_kvinder) %>%
+  drop_na(Aarstal, AS_kvinder) %>%
+  ggplot(aes(x = Aarstal, y = AS_kvinder, fill = "#c21807")) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  theme_light() +
+  labs(title = "Kvinders fremgang på arbejdsmarkedet 1960-1991", x = "Årstal", y = "Antal")
+
+print(kvinder_på_AM)
+
+
+
+```
+```{r}
+# Chart 2: the decline of the housewife
+
+husmoderens_forfald <- samlet_data %>%
+  select(Aarstal, Husmodre_U_erhverv) %>%
+  drop_na(Aarstal, Husmodre_U_erhverv) %>%
+  ggplot(aes(x = Aarstal, y = Husmodre_U_erhverv, fill = "#c21807")) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  theme_light() +
+  labs(title = "Housewives 1960-1991", x = "Year", y = "Number of women")
+
+print(husmoderens_forfald)
+
+
+```
+```{r}
+
+# Chart 3: married women in the workforce
+
+gifte_kvinder_på_AM <- samlet_data %>%
+  select(Aarstal, AS_G_kvinder) %>%
+  drop_na(Aarstal, AS_G_kvinder) %>%
+  ggplot(aes(x = Aarstal, y = AS_G_kvinder, fill = "#c21807")) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  theme_light() +
+  labs(title = "Married women in the workforce 1960-1991", x = "Year", y = "Number of women")
+
+print(gifte_kvinder_på_AM)
+```
+```{r}
+
+# Chart 4: men in the workforce
+mænd_på_AM <- samlet_data %>%
+  select(Aarstal, AS_mand) %>%
+  drop_na(Aarstal, AS_mand) %>%
+  ggplot(aes(x = Aarstal, y = AS_mand, fill = "#c21807")) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  theme_light() +
+  labs(title = "Men in the workforce 1960-1991", x = "Year", y = "Number of women")
+
+print(mænd_på_AM)
+```
+```{r}
+
+# the development in the percentage of women in the workforce 1960-70
+
+værdi_1960_kvinder <- samlet_data$AS_kvinder[samlet_data$Aarstal == 1960]
+værdi_1970_kvinder <- samlet_data$AS_kvinder[samlet_data$Aarstal == 1970]
+
+procent_ændring_kvinder <-(værdi_1970_kvinder - værdi_1960_kvinder) / værdi_1960_kvinder * 100
+
+view(procent_ændring_kvinder)
+
+
+# the development in the percentage of housewives 1960-70
+
+værdi_1960_husmodre <- samlet_data$Husmodre_U_erhverv[samlet_data$Aarstal == 1960]
+værdi_1970_husmodre <- samlet_data$Husmodre_U_erhverv[samlet_data$Aarstal == 1970]
+
+procent_ændring_husmodre <-(værdi_1970_husmodre - værdi_1960_husmodre) / værdi_1960_husmodre * 100
+
+view(procent_ændring_husmodre)
+
+
+
+#  the development in the percentage of housewives 1970-1979
+
+værdi_1970_husmodre <- samlet_data$Husmodre_U_erhverv[samlet_data$Aarstal == 1970]
+værdi_1979_husmodre <- samlet_data$Husmodre_U_erhverv[samlet_data$Aarstal == 1979]
+
+procent_ændring_husmodre_2 <-(værdi_1979_husmodre - værdi_1970_husmodre) / værdi_1970_husmodre * 100
+
+view(procent_ændring_husmodre_2)
+
+
+# a decrease in the number of housewives 1960-1979
+
+værdi_1960_husmodre_total <- samlet_data$Husmodre_U_erhverv[samlet_data$Aarstal == 1960]
+værdi_1970_husmodre_total <- samlet_data$Husmodre_U_erhverv[samlet_data$Aarstal == 1979]
+
+procent_ændring_husmodre3 <-(værdi_1979_husmodre - værdi_1960_husmodre) / værdi_1960_husmodre * 100
+
+view(procent_ændring_husmodre3)
+
+```
+
+``
+
